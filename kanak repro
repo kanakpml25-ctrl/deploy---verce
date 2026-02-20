@@ -1,0 +1,218 @@
+import { motion } from "framer-motion";
+import {
+  Flame, Star, Clock, TrendingUp, Brain, Target, BookOpen, Zap,
+  ArrowUpRight, ArrowDownRight, BarChart3
+} from "lucide-react";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, PieChart, Pie, Cell, RadialBarChart, RadialBar
+} from "recharts";
+
+const weeklyData = [
+  { day: "Mon", hours: 4.5 },
+  { day: "Tue", hours: 3.2 },
+  { day: "Wed", hours: 5.1 },
+  { day: "Thu", hours: 2.8 },
+  { day: "Fri", hours: 6.0 },
+  { day: "Sat", hours: 4.2 },
+  { day: "Sun", hours: 3.5 },
+];
+
+const subjectData = [
+  { name: "Math", hours: 12, color: "hsl(172, 66%, 40%)" },
+  { name: "Physics", hours: 8, color: "hsl(32, 95%, 55%)" },
+  { name: "Chemistry", hours: 6, color: "hsl(262, 83%, 58%)" },
+  { name: "Biology", hours: 5, color: "hsl(152, 60%, 42%)" },
+  { name: "English", hours: 4, color: "hsl(340, 75%, 55%)" },
+];
+
+const weakAreas = [
+  { subject: "Math", topic: "Calculus - Integration", score: 42, trend: "down" },
+  { subject: "Physics", topic: "Thermodynamics", score: 55, trend: "up" },
+  { subject: "Chemistry", topic: "Organic Reactions", score: 38, trend: "down" },
+];
+
+const upcomingTasks = [
+  { title: "Complete Math Chapter 7", due: "Today", priority: "high" },
+  { title: "Physics Mock Test", due: "Tomorrow", priority: "medium" },
+  { title: "Review Bio Notes", due: "Wed", priority: "low" },
+];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.05, duration: 0.4 } }),
+};
+
+const StatCard = ({ icon: Icon, label, value, change, positive, gradient, index }: any) => (
+  <motion.div
+    custom={index}
+    variants={fadeUp}
+    initial="hidden"
+    animate="visible"
+    className={`rounded-2xl p-5 shadow-card ${gradient} relative overflow-hidden`}
+  >
+    <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-foreground/5" />
+    <div className="flex items-center justify-between">
+      <div className="rounded-xl bg-foreground/10 p-2.5">
+        <Icon className="h-5 w-5 text-primary-foreground" />
+      </div>
+      <div className="flex items-center gap-1 text-xs font-medium text-primary-foreground/80">
+        {positive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+        {change}
+      </div>
+    </div>
+    <div className="mt-3">
+      <p className="text-2xl font-heading font-bold text-primary-foreground">{value}</p>
+      <p className="text-sm text-primary-foreground/70">{label}</p>
+    </div>
+  </motion.div>
+);
+
+const Index = () => {
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="font-heading text-2xl font-bold text-foreground">Good Morning, Alex! 👋</h1>
+        <p className="text-muted-foreground">Here's your study progress overview.</p>
+      </motion.div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard icon={Clock} label="Hours Today" value="4.5h" change="+12%" positive gradient="gradient-primary" index={0} />
+        <StatCard icon={Flame} label="Day Streak" value="7 Days" change="+1" positive gradient="gradient-accent" index={1} />
+        <StatCard icon={Star} label="Total Points" value="2,450" change="+180" positive gradient="gradient-points" index={2} />
+        <StatCard icon={Target} label="AI Score" value="78%" change="+5%" positive gradient="gradient-success" index={3} />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Weekly Hours */}
+        <motion.div
+          variants={fadeUp} custom={4} initial="hidden" animate="visible"
+          className="col-span-2 rounded-2xl border border-border bg-card p-6 shadow-card"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-heading font-semibold text-foreground">Weekly Study Hours</h3>
+              <p className="text-sm text-muted-foreground">29.3 hours this week</p>
+            </div>
+            <div className="flex gap-2">
+              {["1W", "1M", "3M"].map((t) => (
+                <button key={t} className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${t === "1W" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={weeklyData}>
+              <defs>
+                <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(172, 66%, 40%)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(172, 66%, 40%)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
+              <XAxis dataKey="day" stroke="hsl(220, 10%, 46%)" fontSize={12} />
+              <YAxis stroke="hsl(220, 10%, 46%)" fontSize={12} />
+              <Tooltip
+                contentStyle={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(220, 13%, 91%)", borderRadius: "12px", fontSize: "13px" }}
+              />
+              <Area type="monotone" dataKey="hours" stroke="hsl(172, 66%, 40%)" strokeWidth={2.5} fill="url(#colorHours)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        {/* Subject Distribution */}
+        <motion.div
+          variants={fadeUp} custom={5} initial="hidden" animate="visible"
+          className="rounded-2xl border border-border bg-card p-6 shadow-card"
+        >
+          <h3 className="font-heading font-semibold text-foreground mb-4">Subject Distribution</h3>
+          <ResponsiveContainer width="100%" height={180}>
+            <PieChart>
+              <Pie data={subjectData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} dataKey="hours" paddingAngle={3}>
+                {subjectData.map((entry, i) => (
+                  <Cell key={i} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="mt-2 space-y-2">
+            {subjectData.slice(0, 3).map((s) => (
+              <div key={s.name} className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="h-2.5 w-2.5 rounded-full" style={{ background: s.color }} />
+                  <span className="text-foreground">{s.name}</span>
+                </div>
+                <span className="font-medium text-muted-foreground">{s.hours}h</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Weak Areas */}
+        <motion.div
+          variants={fadeUp} custom={6} initial="hidden" animate="visible"
+          className="rounded-2xl border border-border bg-card p-6 shadow-card"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Brain className="h-5 w-5 text-primary" />
+            <h3 className="font-heading font-semibold text-foreground">Weak Areas Detected</h3>
+          </div>
+          <div className="space-y-3">
+            {weakAreas.map((area) => (
+              <div key={area.topic} className="flex items-center justify-between rounded-xl bg-secondary p-4">
+                <div>
+                  <p className="text-sm font-medium text-foreground">{area.topic}</p>
+                  <p className="text-xs text-muted-foreground">{area.subject}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-24 h-2 rounded-full bg-border overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${area.score < 50 ? "bg-destructive" : "bg-warning"}`}
+                      style={{ width: `${area.score}%` }}
+                    />
+                  </div>
+                  <span className="text-sm font-semibold text-foreground w-10 text-right">{area.score}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Upcoming Tasks */}
+        <motion.div
+          variants={fadeUp} custom={7} initial="hidden" animate="visible"
+          className="rounded-2xl border border-border bg-card p-6 shadow-card"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Zap className="h-5 w-5 text-accent" />
+            <h3 className="font-heading font-semibold text-foreground">Upcoming Tasks</h3>
+          </div>
+          <div className="space-y-3">
+            {upcomingTasks.map((task) => (
+              <div key={task.title} className="flex items-center gap-4 rounded-xl bg-secondary p-4">
+                <div className={`h-3 w-3 rounded-full ${task.priority === "high" ? "bg-destructive" : task.priority === "medium" ? "bg-warning" : "bg-success"}`} />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-foreground">{task.title}</p>
+                  <p className="text-xs text-muted-foreground">Due: {task.due}</p>
+                </div>
+                <button className="rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors">
+                  Start
+                </button>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+export default Index;
